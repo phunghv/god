@@ -1,0 +1,70 @@
+<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<idea-plugin>
+    <!-- Unique identifier of the plugin. It should be FQN. It cannot be changed between the plugin versions. -->
+    <id>com.phunghv.god</id>
+
+    <!-- Public plugin name should be written in Title Case.
+         Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
+    <name>Chúa</name>
+
+    <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
+    <vendor email="support@phunghv.com" url="https://www.phunghv.com">PhungHV Limited Inc</vendor>
+
+    <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
+         Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
+         Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
+    <description><![CDATA[
+    Demo tạo 1 plugin làm các chức năng chống tay to<br>
+    <em>test format</em>
+  ]]></description>
+
+    <!-- Product and plugin compatibility requirements.
+         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
+    <depends>com.intellij.modules.platform</depends>
+    <depends>org.jetbrains.plugins.terminal</depends>
+
+    <!-- Extension points defined by the plugin.
+         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
+    <extensions defaultExtensionNs="com.intellij">
+
+    </extensions>
+    <actions>
+        <action class="com.phunghv.god.RunHereAction"
+                id="com.phunghv.god.RunHereAction"
+                text="Run Here"
+                icon="AllIcons.Actions.Run_anything"
+                description="Create terminal here">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="first"/>
+            <add-to-group group-id="EditorPopupMenu" anchor="first"/>
+        </action>
+
+        <action class="com.phunghv.god.RevertMavenVersionAction"
+                id="com.phunghv.god.RevertMavenVersionAction"
+                text="Bind Maven Version"
+                icon="AllIcons.Actions.BuildLoadChanges"
+                description="Revert maven version action">
+            <add-to-group group-id="EditorPopupMenu" anchor="after"
+                          relative-to-action="com.phunghv.god.CreateMavenVersionAction"/>
+        </action>
+        <action class="com.phunghv.god.CreateMavenVersionAction"
+                id="com.phunghv.god.CreateMavenVersionAction"
+                text="Extract Maven Version"
+                icon="AllIcons.Actions.AddMulticaret"
+                description="Create maven version action">
+            <add-to-group group-id="EditorPopupMenu" anchor="after"
+                          relative-to-action="com.phunghv.god.RunHereAction"/>
+        </action>
+
+        <action class="com.phunghv.god.ToggleTextAction"
+                id="com.phunghv.god.ToggleTextAction"
+                text="Toggle Text"
+                icon="AllIcons.Actions.MatchCase"
+                description="Toggle text">
+            <keyboard-shortcut first-keystroke="control shift B" keymap="$default" replace-all="true"/>
+            <add-to-group group-id="EditorPopupMenu" anchor="after"
+                          relative-to-action="com.phunghv.god.RevertMavenVersionAction"/>
+        </action>
+
+
+    </actions>
+</idea-plugin>
