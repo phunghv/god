@@ -92,4 +92,15 @@ public class StringConversionFactory {
         }
         return camelCased.toString();
     }
+
+    public static String convertSnakeCase(String source) {
+        var words = parseWords(source);
+        return convertSnakeCase(words, '_');
+    }
+
+    public static String convertCamelCase(String source) {
+        var words = parseWords(source);
+        var text = convertCamelCase(words);
+        return StringUtils.uncapitalize(text);
+    }
 }

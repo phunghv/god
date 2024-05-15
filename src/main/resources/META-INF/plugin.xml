@@ -22,11 +22,13 @@
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
     <depends>com.intellij.modules.platform</depends>
     <depends>org.jetbrains.plugins.terminal</depends>
+    <depends>com.intellij.modules.java-capable</depends>
+    <depends>com.intellij.java</depends>
 
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
-
+        <inlineActionHandler implementation="com.phunghv.god.handler.GenerateMappingHandler"/>
     </extensions>
     <actions>
         <action class="com.phunghv.god.RunHereAction"
@@ -64,7 +66,21 @@
             <add-to-group group-id="EditorPopupMenu" anchor="after"
                           relative-to-action="com.phunghv.god.RevertMavenVersionAction"/>
         </action>
-
-
+        <action id="com.phunghv.god.GenerateJacksonAction"
+                class="com.phunghv.god.GenerateJacksonAction"
+                icon="AllIcons.Actions.ShowCode"
+                text="Generate Jackson"
+                description="Generate Jackson annotation">
+            <add-to-group group-id="EditorPopupMenu" anchor="after"
+                          relative-to-action="com.phunghv.god.ToggleTextAction"/>
+        </action>
+        <action id="com.phunghv.god.GenerateEntityAction"
+                class="com.phunghv.god.GenerateEntityAction"
+                icon="AllIcons.Actions.ShowCode"
+                text="Generate Entity"
+                description="Generate entity class">
+            <add-to-group group-id="EditorPopupMenu" anchor="after"
+                          relative-to-action="com.phunghv.god.ToggleTextAction"/>
+        </action>
     </actions>
 </idea-plugin>

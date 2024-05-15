@@ -1,11 +1,13 @@
 package com.phunghv.god;
 
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.util.PsiUtilBase;
 import com.phunghv.god.dto.MavenDependencyInfo;
 import com.phunghv.god.dto.MavenPropertiesInfo;
 import com.phunghv.god.maven.MavenParser;
@@ -151,5 +153,41 @@ public class RevertMavenVersionAction extends AnAction {
     private String getText(Document document, int line) {
         var text = document.getText(new TextRange(document.getLineStartOffset(line), document.getLineEndOffset(line)));
         return StringUtils.trim(text);
+    }
+
+    @Override
+    public void update(@NotNull AnActionEvent e) {
+        Presentation presentation = e.getPresentation();
+
+        Project project = e.getProject();
+        if (project == null) {
+            presentation.setEnabled(false);
+            presentation.setVisible(false);
+            return;
+        }
+
+        final DataContext dataContext = e.getDataContext();
+        Editor editor = getEditor(dataContext, project, true);
+        if (editor == null) {
+            presentation.setVisible(!ActionPlaces.isPopupPlace(e.getPlace()));
+            presentation.setEnabled(false);
+            presentation.setVisible(false);
+            return;
+        }
+
+        final PsiFile file = PsiUtilBase.getPsiFileInEditor(editor, project);
+        if (file == null) {
+            presentation.setEnabled(false);
+            presentation.setVisible(false);
+            return;
+        }
+        if (!file.getName().equals("pom.xml")) {
+            presentation.setEnabled(false);
+            presentation.setVisible(false);
+        }
+    }
+
+    protected Editor getEditor(@NotNull DataContext dataContext, @NotNull Project project, boolean forUpdate) {
+        return CommonDataKeys.EDITOR.getData(dataContext);
     }
 }
