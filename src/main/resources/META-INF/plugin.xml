@@ -28,7 +28,11 @@
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
-        <inlineActionHandler implementation="com.phunghv.god.handler.GenerateMappingHandler"/>
+        <intentionAction>
+            <language>JAVA</language>
+            <className>com.phunghv.god.intention.GenerateMappingIntention</className>
+            <category>SDK intentions</category>
+        </intentionAction>
     </extensions>
     <actions>
         <action class="com.phunghv.god.RunHereAction"

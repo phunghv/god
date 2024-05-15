@@ -17,35 +17,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 public abstract class BaseGodHandler implements CodeInsightActionHandler {
-
-    @Override
-    public void invoke(@NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file) {
-        if (file.isWritable()) {
-            PsiClass psiClass = OverrideImplementUtil.getContextClass(project, editor, file, false);
-            if (null != psiClass) {
-                processClass(psiClass);
-
-                UndoUtil.markPsiFileForUndo(file);
-            }
-        }
-    }
-
-    protected boolean checkIgnoreField(PsiField psiField) {
-        var modifiers = psiField.getModifierList();
-        if (modifiers == null) {
-            return false;
-        }
-        var ignoreFields = List.of(PsiModifier.FINAL, PsiModifier.STATIC, PsiModifier.TRANSIENT);
-        for (var field : ignoreFields) {
-            if (modifiers.hasModifierProperty(field)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    protected abstract void processClass(@NotNull PsiClass psiClass);
-
     protected static void processIntern(@NotNull Map<PsiField, PsiMethod> fieldMethodMap, @NotNull PsiClass psiClass, String annotationClassName) {
         if (fieldMethodMap.isEmpty()) {
             return;
@@ -54,7 +25,7 @@ public abstract class BaseGodHandler implements CodeInsightActionHandler {
         final PsiMethod firstPropertyMethod = fieldMethodMap.values().iterator().next();
 
         final boolean useAnnotationOnClass = haveAllMethodsSameAccessLevel(fieldMethodMap.values()) && isNotAnnotatedWithOrSameAccessLevelAs(psiClass, firstPropertyMethod,
-                                                                                                                                             annotationClassName);
+                annotationClassName);
 
         if (useAnnotationOnClass) {
             addAnnotation(psiClass, firstPropertyMethod, annotationClassName);
@@ -134,8 +105,40 @@ public abstract class BaseGodHandler implements CodeInsightActionHandler {
             }
         } else {
             presentAnnotation.setDeclaredAttributeValue(PsiAnnotation.DEFAULT_REFERENCED_METHOD_NAME,
-                                                        newPsiAnnotation.findDeclaredAttributeValue(PsiAnnotation.DEFAULT_REFERENCED_METHOD_NAME));
+                    newPsiAnnotation.findDeclaredAttributeValue(PsiAnnotation.DEFAULT_REFERENCED_METHOD_NAME));
         }
+    }
+
+    @Override
+    public void invoke(@NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file) {
+        if (file.isWritable()) {
+            PsiClass psiClass = OverrideImplementUtil.getContextClass(project, editor, file, false);
+            if (null != psiClass) {
+                processClass(psiClass, project);
+
+                UndoUtil.markPsiFileForUndo(file);
+            }
+        }
+    }
+
+    protected boolean checkIgnoreField(PsiField psiField) {
+        var modifiers = psiField.getModifierList();
+        if (modifiers == null) {
+            return false;
+        }
+        var ignoreFields = List.of(PsiModifier.FINAL, PsiModifier.STATIC, PsiModifier.TRANSIENT);
+        for (var field : ignoreFields) {
+            if (modifiers.hasModifierProperty(field)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected abstract void processClass(@NotNull PsiClass psiClass);
+
+    protected void processClass(@NotNull PsiClass psiClass, Project project) {
+        processClass(psiClass);
     }
 
     protected void removeDefaultAnnotation(@NotNull PsiModifierListOwner targetElement, String annotationClassName) {
